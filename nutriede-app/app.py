@@ -104,7 +104,11 @@ def enviar_contato():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # O Cloud Run define a porta através de uma variável de ambiente 'PORT'.
+    # Usamos 8080 como padrão se a variável não for encontrada (para testes locais).
+    port = int(os.environ.get("PORT", 8080))
+    # O debug=False é crucial para ambientes de produção.
+    app.run(host='0.0.0.0', port=port, debug=False)
 
 
 # Linha em branco no final do arquivo
