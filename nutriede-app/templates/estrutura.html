@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Estrutura e Qualidade - {{ super() }}{% endblock %}
+
+{% block content %}
+
+<section class="hero-estrutura text-white text-center d-flex align-items-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Qualidade e Segurança</h1>
+        <p class="lead">Os Pilares da Nossa Cozinha</p>
+    </div>
+</section>
+
+<div class="container my-5">
+
+    <section class="intro-text text-center w-75 mx-auto mb-5">
+        <p class="lead text-muted">Na Nutriêde, cada detalhe da nossa operação é planejado para garantir a máxima eficiência, higiene e, claro, o sabor inconfundível que nossos clientes esperam. Seguimos rigorosamente as melhores práticas do mercado e as normas da vigilância sanitária para levar excelência da nossa cozinha até a sua empresa.</p>
+    </section>
+
+    <section class="pilares-qualidade">
+        <div class="row text-center">
+            
+            <div class="col-lg-4 mb-4">
+                <img src="{{ url_for('static', filename='img/estrutura_pilar1.jpg') }}" class="img-fluid rounded-circle mb-3" alt="Cozinha industrial moderna" style="width: 150px; height: 150px; object-fit: cover;">
+                <h3 class="h4">Estrutura Projetada para a Excelência</h3>
+                <p class="text-muted">Nossa cozinha industrial foi desenhada para otimizar o fluxo de produção, seguindo um layout que evita a contaminação cruzada. Utilizamos equipamentos de ponta em aço inoxidável e realizamos manutenções preventivas rigorosas para garantir a performance e a segurança em todas as etapas.</p>
+            </div>
+
+            <div class="col-lg-4 mb-4">
+                <img src="{{ url_for('static', filename='img/estrutura_pilar2.jpg') }}" class="img-fluid rounded-circle mb-3" alt="Selo de qualidade" style="width: 150px; height: 150px; object-fit: cover;">
+                <h3 class="h4">Rigor em Cada Processo</h3>
+                <p class="text-muted">A segurança alimentar é nossa prioridade máxima. Nossos processos são baseados nas normas da **ANVISA (RDC 216)** e seguimos manuais de **Boas Práticas de Fabricação (BPF)**. Contamos com nutricionistas que supervisionam desde o recebimento até a distribuição, garantindo a rastreabilidade e a qualidade de cada prato.</p>
+            </div>
+
+            <div class="col-lg-4 mb-4">
+                <img src="{{ url_for('static', filename='img/estrutura_pilar3.jpg') }}" class="img-fluid rounded-circle mb-3" alt="Ingredientes frescos" style="width: 150px; height: 150px; object-fit: cover;">
+                <h3 class="h4">A Origem do Sabor</h3>
+                <p class="text-muted">Acreditamos que grandes refeições começam com grandes ingredientes. Trabalhamos com uma rede de **fornecedores homologados** que compartilham do nosso compromisso com a qualidade. Todos os insumos passam por um controle de qualidade rigoroso no recebimento para garantir o frescor e o sabor que remetem à cozinha da nona.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <hr class="my-5">
+
+    <section class="galeria-estrutura">
+        <h2 class="text-center mb-5">Conheça Nossa Operação</h2>
+        <div class="row">
+            <div class="col-md-6 col-lg-3 mb-4">
+                <img src="{{ url_for('static', filename='img/galeria1.jpg') }}" class="img-fluid rounded shadow-sm" alt="Equipe preparando alimentos">
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <img src="{{ url_for('static', filename='img/galeria2.jpg') }}" class="img-fluid rounded shadow-sm" alt="Área de higienização de vegetais">
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <img src="{{ url_for('static', filename='img/galeria3.jpg') }}" class="img-fluid rounded shadow-sm" alt="Armazenamento organizado de insumos">
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <img src="{{ url_for('static', filename='img/galeria4.jpg') }}" class="img-fluid rounded shadow-sm" alt="Refeições sendo acondicionadas em caixas térmicas">
+            </div>
+        </div>
+    </section>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Nossos Serviços - {{ super() }}{% endblock %}
+
+{% block content %}
+
+<section class="hero-servicos text-white text-center d-flex align-items-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Refeições Transportadas</h1>
+        <p class="lead">Sabor e Qualidade Onde Sua Empresa Estiver</p>
+    </div>
+</section>
+
+<div class="container my-5">
+
+    <section class="intro-servicos text-center w-75 mx-auto mb-5">
+        <p class="lead text-muted">Na Nutriêde, somos especialistas em levar refeições nutritivas, saborosas e seguras diretamente para o ambiente de trabalho da sua equipe. Com foco exclusivo em refeições transportadas, garantimos a excelência desde a produção em nossa cozinha central em Curitiba até a montagem e serviço no refeitório da sua empresa, atendendo às mais diversas necessidades corporativas.</p>
+    </section>
+
+    <section class="vantagens mb-5">
+        <h2 class="text-center mb-5">Vantagens do Serviço Nutriêde</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <img src="{{ url_for('static', filename='img/icon_cardapio.png') }}" class="mb-3" alt="Ícone de cardápio personalizado" style="width: 70px;">
+                        <h3 class="h5 card-title">Cardápio Personalizado e Flexível</h3>
+                        <p class="card-text text-muted">Desenvolvemos menus balanceados e deliciosos, adaptados às preferências e necessidades nutricionais da sua equipe. Consideramos restrições alimentares, perfil dos colaboradores e a cultura da sua empresa, sempre com foco em ingredientes frescos e da estação.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <img src="{{ url_for('static', filename='img/icon_logistica.png') }}" class="mb-3" alt="Ícone de logística de entrega" style="width: 70px;">
+                        <h3 class="h5 card-title">Logística Otimizada e Segura</h3>
+                        <p class="card-text text-muted">Nossa estrutura em Curitiba garante uma produção eficiente e um transporte seguro. As refeições são acondicionadas em hotboxes certificadas, mantendo a temperatura ideal do alimento desde a nossa cozinha até o ponto de consumo, com veículos adaptados e equipe treinada.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <img src="{{ url_for('static', filename='img/icon_qualidade.png') }}" class="mb-3" alt="Ícone de qualidade e higiene" style="width: 70px;">
+                        <h3 class="h5 card-title">Padrão de Qualidade Inconfundível</h3>
+                        <p class="card-text text-muted">Com mais de 30 anos de experiência, aplicamos rigorosos controles de qualidade e higiene em todas as etapas, desde a seleção de fornecedores até o preparo e a distribuição. Nossa equipe de nutricionistas assegura o cumprimento das normas da ANVISA e as Boas Práticas de Fabricação (BPF).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="detalhes-servico bg-light py-5 mb-5 rounded shadow-sm">
+        <h2 class="text-center mb-5">Flexibilidade e Conveniência para Sua Empresa</h2>
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <img src="{{ url_for('static', filename='img/servico_detalhe1.jpg') }}" class="img-fluid rounded shadow-sm" alt="Mesas térmicas montadas no refeitório">
+            </div>
+            <div class="col-lg-6 px-lg-5">
+                <h3 class="h4 mb-3">Serviço Completo com Mesas Térmicas</h3>
+                <p class="text-muted">Levamos todo o equipamento necessário para montar um refeitório funcional em sua empresa. Nossas mesas térmicas garantem que as refeições sejam servidas na temperatura ideal, mantendo a qualidade e o sabor, proporcionando uma experiência agradável para seus colaboradores.</p>
+                <ul class="list-unstyled text-muted">
+                    <li><i class="bi bi-check-circle-fill me-2 text-success"></i>Praticidade na montagem e desmontagem.</li>
+                    <li><i class="bi bi-check-circle-fill me-2 text-success"></i>Manutenção da temperatura dos alimentos.</li>
+                    <li><i class="bi bi-check-circle-fill me-2 text-success"></i>Higiene e apresentação impecáveis.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row align-items-center mt-5">
+            <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+                <img src="{{ url_for('static', filename='img/servico_detalhe2.jpg') }}" class="img-fluid rounded shadow-sm" alt="Copeira servindo refeição para funcionário">
+            </div>
+            <div class="col-lg-6 order-lg-1 px-lg-5">
+                <h3 class="h4 mb-3">Opção de Serviço com Copeira Treinada</h3>
+                <p class="text-muted">Para uma experiência ainda mais completa, oferecemos a opção de contar com nossa equipe de copeiras qualificadas. Elas se encarregam de todo o serviço, desde a montagem do buffet até o porcionamento e atendimento aos seus funcionários, liberando sua equipe para focar no core business da empresa.</p>
+                <ul class="list-unstyled text-muted">
+                    <li><i class="bi bi-check-circle-fill me-2 text-success"></i>Atendimento cordial e eficiente.</li>
+                    <li><i class="bi bi-check-circle-fill me-2 text-success"></i>Organização e reposição contínua.</li>
+                    <li><i class="bi bi-check-circle-fill me-2 text-success"></i>Garantia de higiene durante todo o serviço.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-servicos text-center py-5">
+        <h2 class="mb-4">Garanta Refeições de Qualidade para Sua Equipe!</h2>
+        <p class="lead mb-4 text-muted">Descubra como a Nutriêde pode otimizar a alimentação em sua empresa com soluções personalizadas e eficientes.</p>
+        <a href="{{ url_for('home') }}#contato" class="btn btn-primary btn-lg">Solicite uma Proposta Agora</a>
+    </section>
+
+</div>
+
+{% endblock %}

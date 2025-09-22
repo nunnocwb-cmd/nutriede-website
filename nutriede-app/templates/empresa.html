@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}A Empresa - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="page-container" style="padding-top: 80px;">
+    <section class="py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0 text-content-block">
+                    <h1 class="display-5 fw-bold mb-4">Mais de 30 anos de Sabor e Tradição</h1>
+                    <p class="lead text-muted">A Nutriêde Refeições Serviços de Alimentação é uma empresa com mais de 30 anos de história.</p>
+                    <p>A jornada começou com as refeições da nona sendo servidas em nosso restaurante o que conquistou o paladar e a fidelidade dos clientes que frequentavam o estabelecimento, fazendo com que os mesmos se interessassem em servir em suas empresas.</p>
+                    <p>A partir deste momento o foco se tornou refeições coletivas e até hoje estamos presente, com qualidade e utilizando produtos naturais no preparo das mesmas. Nosso foco é o bem estar, saciedade e prazer em comer dos nossos clientes.</p>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <img src="{{ url_for('static', filename='img/nona_deu.png') }}" class="img-fluid rounded shadow-sm img-destaque-empresa" alt="Foto da Nona e da proprietária">
+                    <p class="text-muted fst-italic mt-2">A Nona e a proprietária, mantendo a tradição.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Nossa Filosofia</h2>
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="filosofia-icon mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-bullseye" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M8 13A5 5 0 1 1 8 3a5 5 0 0 1 0 10m0 1A6 6 0 1 0 8 2a6 6 0 0 0 0 12"/><path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6m0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8"/><path d="M9.5 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/></svg>
+                    </div>
+                    <h3 class="h4">Nossa Missão</h3>
+                    <p class="text-muted">Oferecer refeições industriais de alto padrão, com sabor caseiro e temperos naturais, priorizando a qualidade, o atendimento personalizado e a satisfação dos colaboradores das empresas que atendemos. Queremos que cada prato seja uma experiência que lembre o cuidado e o carinho da cozinha da nona.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="filosofia-icon mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/></svg>
+                    </div>
+                    <h3 class="h4">Nossa Visão</h3>
+                    <p class="text-muted">Ser referência em alimentação industrial em Curitiba e região, reconhecida pela excelência no sabor, ingredientes selecionados e atendimento humanizado. Almejamos crescer por indicação, fortalecendo nossa reputação como parceiros que nutrem não apenas o corpo, mas também o bem-estar.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="filosofia-icon mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-shield-check" viewBox="0 0 16 16"><path d="M5.338 1.59a61 61 0 0 0-2.837.856.48.48 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.7 10.7 0 0 0 2.287 2.233c.346.244.652.42.893.533.12.057.218.095.293.118a.5.5 0 0 0 .101.025.5.5 0 0 0 .1-.025c.076-.023.174-.06.294-.118.24-.113.547-.29.893-.533a10.7 10.7 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.923-.283-1.874-.61-2.837-.855A.5.5 0 0 0 9.338 1.5H6.661a.5.5 0 0 0-.323.09zM4.802 2.13a60 60 0 0 1 2.748-.887C9.341 2.556 10.4 3.4 11.228 4.6l-2.09-2.087a.5.5 0 0 0-.707 0l-2.646 2.646a.5.5 0 0 0 0 .708l2.646 2.646a.5.5 0 0 0 .707 0l2.09-2.087c.362.52.668.995.92 1.4l-2.67 2.67a.5.5 0 0 0 0 .708l2.67 2.67c-.252.405-.558.88-.92 1.4l-2.09-2.087a.5.5 0 0 0-.707 0l-2.646 2.646a.5.5 0 0 0 0 .708l2.646 2.646a.5.5 0 0 0 .707 0l2.09-2.087C10.4 12.6 9.34 13.444 8.198 13.867a59.9 59.9 0 0 1-2.748-.887c-1.29-1.6-2.254-3.953-1.86-7.48.455-4.14 1.7-6.505 1.86-7.48z"/><path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/></svg>
+                    </div>
+                    <h3 class="h4">Nossos Valores</h3>
+                    <ul class="list-unstyled text-muted">
+                        <li><strong>Sabor que conquista:</strong> Priorizamos temperos naturais e receitas artesanais.</li>
+                        <li><strong>Qualidade acima de tudo:</strong> Excelência no preparo, higiene e seleção de ingredientes.</li>
+                        <li><strong>Atendimento com humanidade:</strong> Respeito, cuidado e relacionamento com nossos clientes.</li>
+                        <li><strong>Indicação como reconhecimento:</strong> Queremos que nossa comida fale por nós.</li>
+                        <li><strong>Tradição inovadora:</strong> Unimos o conhecimento familiar à eficiência industrial.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-7">
+                    <h2 class="h3">Toque da nona no ambiente corporativo</h2>
+                    <p class="text-muted">Nossas receitas italianas são cuidadosamente adaptadas para o dia a dia das empresas, levando um sabor que remete a conforto e memória afetiva, sem abrir mão da agilidade e consistência que o seu refeitório precisa.</p>
+                </div>
+                <div class="col-lg-5">
+                     <h2 class="h3">Foco em quem importa</h2>
+                     <p class="text-muted">O nosso sucesso é medido pela satisfação e bem-estar dos colaboradores que consomem nossas refeições, não apenas pelos números. Cada prato é pensado para nutrir e trazer um momento de prazer ao dia de trabalho.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="my-5">
+
+    <section class="pb-5">
+        <div class="container">
+            <div class="row text-center">
+                <h2 class="h3 mb-4">Nossa Estrutura</h2>
+                <div class="col-md-6">
+                    <img src="{{ url_for('static', filename='img/estrutura1.png') }}" class="img-fluid rounded shadow-sm mb-3 img-estrutura-empresa" alt="Rigoroso processo de higienização">
+                </div>
+                <div class="col-md-6">
+                    <img src="{{ url_for('static', filename='img/estrutura2.png') }}" class="img-fluid rounded shadow-sm mb-3 img-estrutura-empresa" alt="Caixa térmica hotbox">
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
