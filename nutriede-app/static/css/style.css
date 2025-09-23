@@ -184,7 +184,7 @@ body {
 /* ========================================= */
 
 .hero-servicos {
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../img/hero_servicos.jpg");
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../img/hero_servicos.png");
     background-size: cover;
     background-position: center;
     height: 40vh; /* Altura do banner do topo */
