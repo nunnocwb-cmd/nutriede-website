@@ -4,17 +4,18 @@ FROM python:3.9-slim
 # Define o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
-# Copia o arquivo de dependências para o diretório de trabalho
+# Copia o arquivo de dependências primeiro para otimizar o cache
 COPY requirements.txt .
 
 # Instala as dependências
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia o restante do código da aplicação para o diretório de trabalho
+# Copia o restante do código da aplicação
 COPY . .
 
-# Expõe a porta que a aplicação vai rodar
-EXPOSE 5000
+# Expõe a porta 8080, que o Cloud Run usa
+EXPOSE 8080
 
-# Comando para rodar a aplicação quando o contêiner iniciar
-CMD ["python", "app.py"]
+# Comando para iniciar a aplicação com o Gunicorn
+# Ele automaticamente usa a variável de ambiente $PORT fornecida pelo Cloud Run
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app
