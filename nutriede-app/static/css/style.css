@@ -10,16 +10,20 @@ body {
 /* ========================================= */
 
 .btn-primary {
-    background-color: #f37021; /* Laranja da sua logo */
-    border-color: #f37021;     /* Borda da mesma cor */
+    background-color: #f37021;
+    /* Laranja da sua logo */
+    border-color: #f37021;
+    /* Borda da mesma cor */
     font-weight: 600;
     transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
-    background-color: #d86018; /* Laranja um pouco mais escuro no hover */
+    background-color: #d86018;
+    /* Laranja um pouco mais escuro no hover */
     border-color: #d86018;
-    transform: translateY(-2px); /* Efeito sutil de "levantar" no hover */
+    transform: translateY(-2px);
+    /* Efeito sutil de "levantar" no hover */
 }
 
 /* ========================================= */
@@ -140,7 +144,8 @@ body {
 /* ========================================= */
 
 .filosofia-icon svg {
-    color: #f37021; /* Laranja da logo */
+    color: #f37021;
+    /* Laranja da logo */
     margin-bottom: 1rem;
 }
 
@@ -174,7 +179,8 @@ body {
     background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../img/hero_estrutura.jpg");
     background-size: cover;
     background-position: center;
-    height: 40vh; /* Altura do banner do topo */
+    height: 40vh;
+    /* Altura do banner do topo */
     min-height: 300px;
 }
 
@@ -187,26 +193,47 @@ body {
     background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../img/hero_servicos.png");
     background-size: cover;
     background-position: center;
-    height: 40vh; /* Altura do banner do topo */
+    height: 40vh;
+    /* Altura do banner do topo */
     min-height: 300px;
 }
 
 /* Ícones de checagem nas listas */
 .detalhes-servico ul li i {
-    color: #f37021; /* Laranja da logo */
+    color: #f37021;
+    /* Laranja da logo */
 }
 
 .card {
-    border: none; /* Remove a borda padrão do card */
+    border: none;
+    /* Remove a borda padrão do card */
 }
 
 .card img {
-    max-width: 80px; /* Tamanho dos ícones nos cards de vantagens */
+    max-width: 80px;
+    /* Tamanho dos ícones nos cards de vantagens */
     height: auto;
 }
 
 /* Ajuste para o botão da CTA */
 .cta-servicos .btn-primary {
-    padding: 1rem 2.5rem; /* Botão maior e mais proeminente */
+    padding: 1rem 2.5rem;
+    /* Botão maior e mais proeminente */
     font-size: 1.25rem;
+}
+
+/* ========================================= */
+/* ESTILOS DAS ABAS DE CONTATO               */
+/* ========================================= */
+
+.nav-tabs .nav-link {
+    color: #6c757d;
+    /* Cor cinza para abas inativas */
+}
+
+.nav-tabs .nav-link.active {
+    color: #f37021;
+    /* Laranja da logo para a aba ativa */
+    border-color: #f37021 #f37021 #fff;
+    font-weight: 600;
 }
