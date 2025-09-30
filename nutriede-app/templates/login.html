@@ -1,17 +1,18 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Login - Nutriêde{% endblock %}
+{% block title %}Login - Área Restrita{% endblock %}
+
+{% block body_class %}login-body{% endblock %}
 
 {% block head %}
-    {{ super() }}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="login-container d-flex align-items-center justify-content-center">
-    <div class="login-card p-5 rounded shadow-lg text-center animate__animated animate__fadeInUp">
+<div class="login-container">
+    <div class="login-card p-4 p-md-5 rounded shadow-lg text-center animate__animated animate__fadeInUp animate__delay-0.5s">
         <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Nutriêde" class="mb-4" height="60">
-        <h2 class="h4 mb-4 text-white">Área Restrita</h2>
+        <h2 class="h4 mb-4" style="color: #fff;">Área Restrita</h2>
         <form>
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
@@ -22,9 +23,9 @@
                 <input type="password" class="form-control" placeholder="Senha" required>
             </div>
             <div class="d-grid mb-3">
-                <button type="submit" class="btn btn-primary btn-login">Entrar</button>
+                <button type="submit" class="btn btn-login">Entrar</button>
             </div>
-            <p class="text-white-50"><a href="#" class="text-white-50">Esqueceu a senha?</a></p>
+            <a href="#" class="text-white-50 small">Esqueceu a senha?</a>
         </form>
     </div>
 </div>
