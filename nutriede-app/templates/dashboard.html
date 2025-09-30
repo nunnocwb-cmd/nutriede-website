@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Nutriêde{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 100px; min-height: 80vh;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">Bem-vindo ao Dashboard, {{ current_user.username }}!</h1>
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Sair</a>
+    </div>
+
+    <p class="lead">Esta é a sua área de gestão. Futuramente, aqui poderá gerir clientes, cardápios e relatórios.</p>
+
+    <!-- Conteúdo do dashboard virá aqui -->
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Gerir Clientes</h5>
+                    <p class="card-text">Adicionar, editar e visualizar informações dos clientes.</p>
+                    <a href="#" class="btn btn-primary disabled">Em breve</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Gerir Cardápios</h5>
+                    <p class="card-text">Criar e associar cardápios semanais aos clientes.</p>
+                    <a href="#" class="btn btn-primary disabled">Em breve</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Gerir Faturas</h5>
+                    <p class="card-text">Fazer upload de boletos e notas fiscais para os clientes.</p>
+                    <a href="#" class="btn btn-primary disabled">Em breve</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

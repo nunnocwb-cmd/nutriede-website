@@ -13,14 +13,18 @@
     <div class="login-card p-4 p-md-5 rounded shadow-lg text-center animate__animated animate__fadeInUp animate__delay-0.5s">
         <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Nutriêde" class="mb-4" height="60">
         <h2 class="h4 mb-4" style="color: #fff;">Área Restrita</h2>
-        <form>
+        
+        <!-- FORMULÁRIO ATUALIZADO ABAIXO -->
+        <form method="POST" action="{{ url_for('login') }}">
             <div class="input-group mb-3">
-                <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                <input type="text" class="form-control" placeholder="Usuário ou E-mail" required>
+                <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                <!-- Alterado para 'email' e adicionado o atributo 'name' -->
+                <input type="email" class="form-control" placeholder="E-mail" name="email" required>
             </div>
             <div class="input-group mb-4">
                 <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                <input type="password" class="form-control" placeholder="Senha" required>
+                <!-- Adicionado o atributo 'name' -->
+                <input type="password" class="form-control" placeholder="Senha" name="password" required>
             </div>
             <div class="d-grid mb-3">
                 <button type="submit" class="btn btn-login">Entrar</button>
@@ -29,4 +33,4 @@
         </form>
     </div>
 </div>
-{% endblock %}
+{% endblock %} 
