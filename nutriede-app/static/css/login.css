@@ -2,17 +2,18 @@
 /* ESTILOS DA PÁGINA DE LOGIN                */
 /* ========================================= */
 
-/* Fundo Gradiente Animado */
+/* Fundo Gradiente Animado (Laranja e Cinza) */
 body.login-body {
-    background: linear-gradient(-45deg, #f37021, #f9ab6c, #a7d9b0, #69bd7c);
+    /* Novas cores: Laranja da logo e tons de cinza suaves */
+    background: linear-gradient(-45deg, #f37021, #f8f9fa, #6c757d, #f37021);
     background-size: 400% 400%;
     animation: gradientAnimation 15s ease infinite;
     height: 100vh;
     margin: 0;
-    display: flex; /* Para centralizar o conteúdo */
-    align-items: center; /* Para centralizar o conteúdo */
-    justify-content: center; /* Para centralizar o conteúdo */
-    overflow: hidden; /* Evita barras de rolagem desnecessárias */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Evita barras de rolagem */
 }
 
 @keyframes gradientAnimation {
@@ -21,21 +22,24 @@ body.login-body {
     100% { background-position: 0% 50%; }
 }
 
-/* Container do Login */
+/* Container do Login (Ajuste de Posição) */
 .login-container {
-    min-height: 100vh; /* Ocupa a altura total para centralizar */
+    min-height: 100vh;
     width: 100%;
+    /* Adiciona um espaçamento no topo para não ficar atrás do menu */
+    padding-top: 70px;
 }
 
 /* Card de Login */
 .login-card {
-    background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro semi-transparente */
+    background-color: rgba(0, 0, 0, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px); /* Efeito de vidro fosco */
+    backdrop-filter: blur(10px);
     max-width: 400px;
     width: 100%;
-    transform: translateY(-50px); /* Leve deslocamento para a animação */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); /* Sombra mais forte para flutuar */
+    /* Sombra mais forte para o efeito flutuante */
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5);
+    /* Remove a transformação que estava empurrando o card para cima */
 }
 
 /* Estilo dos Inputs */
@@ -44,12 +48,14 @@ body.login-body {
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: #fff;
 }
+
 .login-card .form-control::placeholder {
     color: rgba(255, 255, 255, 0.7);
 }
+
 .login-card .form-control:focus {
     background-color: rgba(255, 255, 255, 0.2);
-    border-color: #f37021; /* Laranja da logo */
+    border-color: #f37021;
     box-shadow: 0 0 0 0.25rem rgba(243, 112, 33, 0.25);
 }
 
@@ -60,14 +66,15 @@ body.login-body {
     color: rgba(255, 255, 255, 0.7);
 }
 
-/* Botão de Login */
+/* Botão de Login (Herda o estilo geral, mas garantimos aqui) */
 .btn-login {
-    background-color: #f37021; /* Laranja da logo */
+    background-color: #f37021;
     border-color: #f37021;
     font-weight: bold;
     transition: background-color 0.3s ease;
 }
+
 .btn-login:hover {
-    background-color: #e06015; /* Laranja mais escuro no hover */
+    background-color: #e06015;
     border-color: #e06015;
 }
