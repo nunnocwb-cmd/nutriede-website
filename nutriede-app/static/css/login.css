@@ -1,0 +1,73 @@
+/* ========================================= */
+/* ESTILOS DA PÁGINA DE LOGIN                */
+/* ========================================= */
+
+/* Fundo Gradiente Animado */
+body.login-body {
+    background: linear-gradient(-45deg, #f37021, #f9ab6c, #a7d9b0, #69bd7c);
+    background-size: 400% 400%;
+    animation: gradientAnimation 15s ease infinite;
+    height: 100vh;
+    margin: 0;
+    display: flex; /* Para centralizar o conteúdo */
+    align-items: center; /* Para centralizar o conteúdo */
+    justify-content: center; /* Para centralizar o conteúdo */
+    overflow: hidden; /* Evita barras de rolagem desnecessárias */
+}
+
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Container do Login */
+.login-container {
+    min-height: 100vh; /* Ocupa a altura total para centralizar */
+    width: 100%;
+}
+
+/* Card de Login */
+.login-card {
+    background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro semi-transparente */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px); /* Efeito de vidro fosco */
+    max-width: 400px;
+    width: 100%;
+    transform: translateY(-50px); /* Leve deslocamento para a animação */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); /* Sombra mais forte para flutuar */
+}
+
+/* Estilo dos Inputs */
+.login-card .form-control {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+}
+.login-card .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+.login-card .form-control:focus {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: #f37021; /* Laranja da logo */
+    box-shadow: 0 0 0 0.25rem rgba(243, 112, 33, 0.25);
+}
+
+/* Estilo dos Ícones nos Inputs */
+.login-card .input-group-text {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Botão de Login */
+.btn-login {
+    background-color: #f37021; /* Laranja da logo */
+    border-color: #f37021;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+.btn-login:hover {
+    background-color: #e06015; /* Laranja mais escuro no hover */
+    border-color: #e06015;
+}
