@@ -11,7 +11,8 @@ from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager, UserMixin
+from flask_login import (LoginManager, UserMixin, login_user,
+                       logout_user, login_required, current_user)
 from werkzeug.utils import secure_filename
 
 # ==============================================================================
@@ -30,8 +31,8 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# --- Configurações do E-mail ---
-app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+# --- Configurações do E-mail (com valores padrão para robustez) ---
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'true').lower() in ['true', '1', 't']
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
@@ -50,8 +51,10 @@ migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 mail = Mail(app)
 login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+# Configurações do Flask-Login
+login_manager.login_view = 'login'  # Página para onde redirecionar se não estiver logado
 login_manager.login_message_category = 'info'
+login_manager.login_message = "Por favor, faça login para acessar esta página."
 
 # ==============================================================================
 # 4. MODELOS DO BANCO DE DADOS
@@ -116,30 +119,71 @@ def inject_year():
     """Disponibiliza o ano atual para todos os templates (usado no rodapé)."""
     return {'current_year': datetime.date.today().year}
 
+
+# --- Rotas Públicas ---
+
 @app.route('/')
 def home():
     """Rota para a página inicial."""
     return render_template('index.html')
 
-@app.route('/login')
-def login():
-    """Rota para a página de login da área restrita."""
-    return render_template('login.html')
 
 @app.route('/empresa')
 def empresa():
     """Rota para a página 'A Empresa'."""
     return render_template('empresa.html')
 
+
 @app.route('/estrutura')
 def estrutura():
     """Rota para a página 'Estrutura e Qualidade'."""
     return render_template('estrutura.html')
 
+
 @app.route('/servicos')
 def servicos():
     """Rota para a página 'Nossos Serviços'."""
     return render_template('servicos.html')
+
+
+# --- Rotas de Autenticação e Área Restrita ---
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """Rota para a página de login e processamento do formulário."""
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+        
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        user = User.query.filter_by(email=email).first()
+
+        if user and bcrypt.check_password_hash(user.password_hash, password):
+            login_user(user, remember=True)
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('dashboard'))
+        else:
+            flash('Login inválido. Verifique o e-mail e a senha.', 'danger')
+
+    return render_template('login.html')
+
+
+@app.route('/logout')
+def logout():
+    """Rota para fazer logout do usuário."""
+    logout_user()
+    return redirect(url_for('home'))
+
+
+@app.route('/dashboard')
+@login_required  # Esta linha protege a rota!
+def dashboard():
+    """Rota para o painel de controle, acessível apenas a usuários logados."""
+    return render_template('dashboard.html')
+
+
+# --- Rota do Formulário de Contato ---
 
 @app.route('/enviar-contato', methods=['POST'])
 def enviar_contato():
@@ -150,27 +194,62 @@ def enviar_contato():
         
         try:
             if form_type == 'orcamento':
-                # (Lógica para o formulário de orçamento...)
                 nome = request.form.get('nome')
                 empresa = request.form.get('empresa')
-                # ... etc ...
+                cnpj = request.form.get('cnpj')
+                qtd_refeicoes = request.form.get('qtd_refeicoes')
+                email = request.form.get('email')
+                mensagem = request.form.get('mensagem')
+                
                 subject = f"Novo Pedido de Orçamento - {empresa}"
-                body = "..." # Corpo do e-mail
+                body = f"""
+                Novo pedido de ORÇAMENTO recebido pelo site:
+
+                Nome: {nome}
+                Empresa: {empresa}
+                CNPJ: {cnpj}
+                Nº de Refeições/Dia: {qtd_refeicoes}
+                E-mail: {email}
+                Mensagem: {mensagem}
+                """
                 msg = Message(subject=subject, sender=('Nutriêde Website', app.config['MAIL_USERNAME']), recipients=['nutriede@nutriede.com.br'], body=body)
 
             elif form_type == 'fornecedor':
-                # (Lógica para o formulário de fornecedor...)
-                subject = "Novo Contato de Fornecedor"
-                body = "..." # Corpo do e-mail
+                fornecedor_empresa = request.form.get('fornecedor_empresa')
+                fornecedor_contato = request.form.get('fornecedor_contato')
+                fornecedor_email = request.form.get('fornecedor_email')
+                fornecedor_produto = request.form.get('fornecedor_produto')
+
+                subject = f"Novo Contato de Fornecedor - {fornecedor_empresa}"
+                body = f"""
+                Novo contato de FORNECEDOR recebido pelo site:
+                
+                Nome da Empresa: {fornecedor_empresa}
+                Nome do Contato: {fornecedor_contato}
+                E-mail: {fornecedor_email}
+                Produto/Serviço: {fornecedor_produto}
+                """
+                msg = Message(subject=subject, sender=('Nutriêde Website', app.config['MAIL_USERNAME']), recipients=['nutriede@nutriede.com.br'], body=body)
+
+            elif form_type == 'trabalhe_conosco':
+                candidato_nome = request.form.get('candidato_nome')
+                candidato_email = request.form.get('candidato_email')
+                candidato_telefone = request.form.get('candidato_telefone')
+                curriculo = request.files.get('curriculo')
+
+                subject = f"Nova Candidatura Recebida - {candidato_nome}"
+                body = f"""
+                Nova candidatura para 'TRABALHE CONOSCO' recebida pelo site:
+
+                Nome Completo: {candidato_nome}
+                E-mail: {candidato_email}
+                Telefone: {candidato_telefone}
+                
+                O currículo está em anexo.
+                """
                 msg = Message(subject=subject, sender=('Nutriêde Website', app.config['MAIL_USERNAME']), recipients=['nutriede@nutriede.com.br'], body=body)
                 
-            elif form_type == 'trabalhe_conosco':
-                # (Lógica para o formulário trabalhe conosco...)
-                subject = "Nova Candidatura Recebida"
-                body = "..." # Corpo do e-mail
-                msg = Message(subject=subject, sender=('Nutriêde Website', app.config['MAIL_USERNAME']), recipients=['nutriede@nutriede.com.br'], body=body)
-                curriculo = request.files.get('curriculo')
-                if curriculo:
+                if curriculo and curriculo.filename != '':
                     filename = secure_filename(curriculo.filename)
                     msg.attach(filename, curriculo.content_type, curriculo.read())
 
@@ -191,6 +270,8 @@ def enviar_contato():
 # ==============================================================================
 
 if __name__ == '__main__':
+    # Usa a porta definida pelo ambiente de produção (Google Cloud) ou 8080 para testes locais
     port = int(os.environ.get("PORT", 8080))
+    # Executa o app. debug=False é essencial para produção.
     app.run(host='0.0.0.0', port=port, debug=False)
 
