@@ -11,15 +11,13 @@ from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
-# Funções adicionadas para o sistema de login
 from flask_login import (LoginManager, UserMixin, login_user,
                        logout_user, login_required, current_user)
 from werkzeug.utils import secure_filename
 
-# Adicionado para conexão com Google Cloud SQL
+# Importações para o Cloud SQL Connector
 import sqlalchemy
 from google.cloud.sql.connector import Connector, IPTypes
-
 
 # ==============================================================================
 # 2. INICIALIZAÇÃO E CONFIGURAÇÕES DO APP
@@ -31,44 +29,10 @@ load_dotenv()
 # Cria a instância principal da aplicação Flask
 app = Flask(__name__)
 
-
-# --- Configurações do App ---
+# --- Configurações Gerais do App ---
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', os.urandom(24))
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# --- Configuração da Conexão com o Banco de Dados (Cloud SQL) ---
-def get_conn() -> sqlalchemy.engine.base.Connection:
-    """Função para criar uma conexão segura com o Cloud SQL."""
-    connector = Connector()
-    
-    # Lê as variáveis de ambiente necessárias para a conexão
-    # Ex: 'my-project:us-central1:my-instance'
-    instance_connection_name = os.environ["INSTANCE_CONNECTION_NAME"]
-    db_user = os.environ["DB_USER"]                  # Ex: 'my-db-user'
-    db_pass = os.environ["DB_PASS"]                  # Ex: 'my-db-password'
-    db_name = os.environ["DB_NAME"]                  # Ex: 'my-database'
-    
-    # Determina o tipo de IP com base na variável de ambiente (padrão: PUBLIC)
-    # Use "PRIVATE" para conexão de IP privado
-    ip_type_str = os.environ.get("IP_TYPE", "PUBLIC").upper()
-    ip_type = IPTypes.PRIVATE if ip_type_str == "PRIVATE" else IPTypes.PUBLIC
-
-    conn = connector.connect(
-        instance_connection_name,
-        "pg8000",
-        user=db_user,
-        password=db_pass,
-        db=db_name,
-        ip_type=ip_type,
-    )
-    return conn
-
-# Configura o SQLAlchemy para usar a função de conexão do Cloud SQL Connector
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    "creator": get_conn
-}
-
 
 # --- Configurações do E-mail (com valores padrão para robustez) ---
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
@@ -78,7 +42,39 @@ app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 
 # ==============================================================================
-# 3. INICIALIZAÇÃO DAS EXTENSÕES
+# 3. CONFIGURAÇÃO DA CONEXÃO COM O BANCO DE DADOS (NOVO MÉTODO)
+# ==============================================================================
+
+# Inicializa o conector do Cloud SQL
+connector = Connector()
+
+def get_conn() -> sqlalchemy.engine.base.Connection:
+    """Função que cria uma conexão segura com o Cloud SQL."""
+    instance_connection_name = os.environ["INSTANCE_CONNECTION_NAME"]
+    db_user = os.environ["DB_USER"]
+    db_pass = os.environ["DB_PASS"]
+    db_name = os.environ["DB_NAME"]
+
+    # Determina o tipo de IP a ser usado. No Google Cloud, usa a rede privada.
+    # Localmente (quando a variável de ambiente GOOGLE_CLOUD_RUN não existe), usa a pública.
+    ip_type = IPTypes.PRIVATE if os.environ.get("GOOGLE_CLOUD_RUN") else IPTypes.PUBLIC
+
+    return connector.connect(
+        instance_connection_name,
+        "pg8000",
+        user=db_user,
+        password=db_pass,
+        db=db_name,
+        ip_type=ip_type,
+    )
+
+# Configura o SQLAlchemy para usar a nossa função de conexão personalizada
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    "creator": get_conn
+}
+
+# ==============================================================================
+# 4. INICIALIZAÇÃO DAS EXTENSÕES
 # ==============================================================================
 
 # Garante que a pasta de uploads exista no projeto
@@ -91,12 +87,12 @@ bcrypt = Bcrypt(app)
 mail = Mail(app)
 login_manager = LoginManager(app)
 # Configurações do Flask-Login
-login_manager.login_view = 'login'  # Página para onde redirecionar se não estiver logado
+login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 login_manager.login_message = "Por favor, faça login para acessar esta página."
 
 # ==============================================================================
-# 4. MODELOS DO BANCO DE DADOS
+# 5. MODELOS DO BANCO DE DADOS
 # ==============================================================================
 
 class User(db.Model, UserMixin):
@@ -110,7 +106,7 @@ class User(db.Model, UserMixin):
         return f'<User {self.username}>'
 
 # ==============================================================================
-# 5. CONFIGURAÇÃO DO FLASK-LOGIN
+# 6. CONFIGURAÇÃO DO FLASK-LOGIN
 # ==============================================================================
 
 @login_manager.user_loader
@@ -119,7 +115,7 @@ def load_user(user_id):
     return db.session.get(User, int(user_id))
 
 # ==============================================================================
-# 6. COMANDOS PERSONALIZADOS DE TERMINAL (CLI)
+# 7. COMANDOS PERSONALIZADOS DE TERMINAL (CLI)
 # ==============================================================================
 
 @app.cli.command("create-user")
@@ -150,7 +146,7 @@ def create_user():
     print(f"Usuário '{username}' criado com sucesso!")
 
 # ==============================================================================
-# 7. ROTAS DA APLICAÇÃO (VIEWS)
+# 8. ROTAS DA APLICAÇÃO (VIEWS)
 # ==============================================================================
 
 @app.context_processor
@@ -305,7 +301,7 @@ def enviar_contato():
         return redirect(url_for('home') + '#contato')
 
 # ==============================================================================
-# 8. EXECUÇÃO DO SERVIDOR
+# 9. EXECUÇÃO DO SERVIDOR
 # ==============================================================================
 
 if __name__ == '__main__':
