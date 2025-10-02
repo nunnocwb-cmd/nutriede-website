@@ -18,4 +18,4 @@ EXPOSE 8080
 
 # Comando para iniciar a aplicação com o Gunicorn
 # Ele automaticamente usa a variável de ambiente $PORT fornecida pelo Cloud Run
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "1", "--threads", "8", "--timeout", "0", "app:app"]
+CMD ["/usr/local/bin/gunicorn", "--bind", "0.0.0.0:8080", "--workers", "1", "--threads", "8", "--timeout", "0", "app:app"]
