@@ -11,6 +11,7 @@ from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
+# Funções adicionadas para o sistema de login
 from flask_login import (LoginManager, UserMixin, login_user,
                        logout_user, login_required, current_user)
 from werkzeug.utils import secure_filename
@@ -177,7 +178,7 @@ def logout():
 
 
 @app.route('/dashboard')
-@login_required  # Esta linha protege a rota!
+@login_required
 def dashboard():
     """Rota para o painel de controle, acessível apenas a usuários logados."""
     return render_template('dashboard.html')
