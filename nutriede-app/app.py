@@ -16,6 +16,11 @@ from flask_login import (LoginManager, UserMixin, login_user,
                        logout_user, login_required, current_user)
 from werkzeug.utils import secure_filename
 
+# Adicionado para conexão com Google Cloud SQL
+import sqlalchemy
+from google.cloud.sql.connector import Connector, IPTypes
+
+
 # ==============================================================================
 # 2. INICIALIZAÇÃO E CONFIGURAÇÕES DO APP
 # ==============================================================================
@@ -26,11 +31,44 @@ load_dotenv()
 # Cria a instância principal da aplicação Flask
 app = Flask(__name__)
 
+
 # --- Configurações do App ---
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', os.urandom(24))
 app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# --- Configuração da Conexão com o Banco de Dados (Cloud SQL) ---
+def get_conn() -> sqlalchemy.engine.base.Connection:
+    """Função para criar uma conexão segura com o Cloud SQL."""
+    connector = Connector()
+    
+    # Lê as variáveis de ambiente necessárias para a conexão
+    # Ex: 'my-project:us-central1:my-instance'
+    instance_connection_name = os.environ["INSTANCE_CONNECTION_NAME"]
+    db_user = os.environ["DB_USER"]                  # Ex: 'my-db-user'
+    db_pass = os.environ["DB_PASS"]                  # Ex: 'my-db-password'
+    db_name = os.environ["DB_NAME"]                  # Ex: 'my-database'
+    
+    # Determina o tipo de IP com base na variável de ambiente (padrão: PUBLIC)
+    # Use "PRIVATE" para conexão de IP privado
+    ip_type_str = os.environ.get("IP_TYPE", "PUBLIC").upper()
+    ip_type = IPTypes.PRIVATE if ip_type_str == "PRIVATE" else IPTypes.PUBLIC
+
+    conn = connector.connect(
+        instance_connection_name,
+        "pg8000",
+        user=db_user,
+        password=db_pass,
+        db=db_name,
+        ip_type=ip_type,
+    )
+    return conn
+
+# Configura o SQLAlchemy para usar a função de conexão do Cloud SQL Connector
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    "creator": get_conn
+}
+
 
 # --- Configurações do E-mail (com valores padrão para robustez) ---
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
