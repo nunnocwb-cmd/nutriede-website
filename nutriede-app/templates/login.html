@@ -18,10 +18,12 @@
         <form method="POST" action="{{ url_for('login') }}">
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                <!-- Adicionado o atributo 'name' -->
                 <input type="email" class="form-control" placeholder="E-mail" name="email" required>
             </div>
             <div class="input-group mb-4">
                 <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                <!-- Adicionado o atributo 'name' -->
                 <input type="password" class="form-control" placeholder="Senha" name="password" required>
             </div>
             <div class="d-grid mb-3">
@@ -35,16 +37,16 @@
 ```
 
 **O que foi corrigido?**
-A única alteração crucial foi na tag `<form>`, que agora está assim:
+A alteração crucial foi na tag `<form>`, que agora está assim:
 `<form method="POST" action="{{ url_for('login') }}">`
 
 Isto diz ao navegador para enviar os dados de forma segura (método `POST`) para a nossa rota de login no `app.py`, o que finalmente ativará a nossa lógica de verificação de senha.
 
 ---
-### **Ação Final**
+### Ação Final
 
-1.  **Salve** o arquivo `login.html` com este novo conteúdo.
-2.  **Envie a atualização para o GitHub** para que o site online seja corrigido:
+1.  **Salve** o arquivo `login.html` com este novo conteúdo no seu **VS Code**.
+2.  **Envie a atualização para o GitHub** para que o site online seja corrigido. O processo é o mesmo que já conhecemos:
     ```bash
     # Na pasta raiz (NUTRI2K26)
     git add .
