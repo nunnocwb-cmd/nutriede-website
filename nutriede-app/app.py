@@ -27,12 +27,23 @@ load_dotenv()
 app = Flask(__name__)
 
 # --- Configurações Gerais ---
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+# Define a chave secreta, essencial para a segurança da sessão
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    print("AVISO: A variável de ambiente SECRET_KEY não está definida. Usando uma chave padrão para desenvolvimento.")
+    SECRET_KEY = 'uma-chave-secreta-temporaria-e-insegura-para-desenvolvimento'
+app.config['SECRET_KEY'] = SECRET_KEY
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # --- Configuração do Banco de Dados ---
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+DATABASE_URL = os.getenv('DATABASE_URL')
+if not DATABASE_URL:
+    print("AVISO: A variável de ambiente DATABASE_URL não está definida. Usando um banco de dados SQLite local para desenvolvimento.")
+    # Define o caminho absoluto para o banco de dados na raiz do projeto
+    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'local_test.db')
+    DATABASE_URL = f'sqlite:///{db_path}'
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 
 # --- Configurações do E-mail ---
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
@@ -69,6 +80,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
+    role = db.Column(db.String(80), nullable=False, default='user')
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -107,11 +119,11 @@ def create_user():
         return
 
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    new_user = User(username=username, email=email, password_hash=hashed_password)
+    new_user = User(username=username, email=email, password_hash=hashed_password, role='manager')
 
     db.session.add(new_user)
     db.session.commit()
-    print(f"Utilizador '{username}' criado com sucesso!")
+    print(f"Utilizador '{username}' com a função 'manager' criado com sucesso!")
 
 # ==============================================================================
 # 7. ROTAS DA APLICAÇÃO (VIEWS)
@@ -163,6 +175,10 @@ def login():
         user = User.query.filter_by(email=email).first()
 
         if user and bcrypt.check_password_hash(user.password_hash, password):
+            if user.role != 'manager':
+                flash('Acesso negado. Apenas gestores podem entrar nesta área.', 'danger')
+                return redirect(url_for('login'))
+
             login_user(user, remember=True)
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('dashboard'))
@@ -194,8 +210,30 @@ def enviar_contato():
     if request.method == 'POST':
         form_type = request.form.get('form_type')
         msg = None
-        
+
         try:
+            # --- Validação Unificada ---
+            required_fields = []
+            if form_type == 'orcamento':
+                required_fields = ['nome', 'empresa', 'cnpj', 'qtd_refeicoes', 'email', 'mensagem']
+            elif form_type == 'fornecedor':
+                required_fields = ['fornecedor_empresa', 'fornecedor_contato', 'fornecedor_email', 'fornecedor_produto']
+            elif form_type == 'trabalhe_conosco':
+                required_fields = ['candidato_nome', 'candidato_email', 'candidato_telefone']
+
+            # Verifica se os campos de texto estão preenchidos
+            for field in required_fields:
+                if not request.form.get(field):
+                    flash('Por favor, preencha todos os campos obrigatórios.', 'warning')
+                    return redirect(url_for('home') + '#contato')
+
+            # Validação específica para o upload de arquivo
+            if form_type == 'trabalhe_conosco':
+                if 'curriculo' not in request.files or request.files['curriculo'].filename == '':
+                    flash('Por favor, anexe o seu currículo.', 'warning')
+                    return redirect(url_for('home') + '#contato')
+
+            # --- Processamento do Formulário (se a validação passar) ---
             if form_type == 'orcamento':
                 nome = request.form.get('nome')
                 empresa = request.form.get('empresa')
@@ -203,7 +241,7 @@ def enviar_contato():
                 qtd_refeicoes = request.form.get('qtd_refeicoes')
                 email = request.form.get('email')
                 mensagem = request.form.get('mensagem')
-                
+
                 subject = f"Novo Pedido de Orçamento - {empresa}"
                 body = f"""
                 Novo pedido de ORÇAMENTO recebido pelo site:
@@ -252,14 +290,15 @@ def enviar_contato():
                 """
                 msg = Message(subject=subject, sender=('Nutriêde Website', app.config['MAIL_USERNAME']), recipients=['nutriede@nutriede.com.br'], body=body)
                 
-                if curriculo and curriculo.filename != '':
-                    filename = secure_filename(curriculo.filename)
-                    msg.attach(filename, curriculo.content_type, curriculo.read())
+                # O anexo é adicionado aqui, pois a validação já garantiu que ele existe
+                filename = secure_filename(curriculo.filename)
+                msg.attach(filename, curriculo.content_type, curriculo.read())
 
             if msg:
                 mail.send(msg)
                 flash('Sua mensagem foi enviada com sucesso! Agradecemos o seu contato.', 'success')
             else:
+                # Esta condição agora é menos provável de ser atingida, mas é mantida por segurança
                 flash('Tipo de formulário desconhecido.', 'warning')
 
         except Exception as e:
@@ -277,4 +316,3 @@ if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))
     # Executa o app. debug=False é essencial para produção.
     app.run(host='0.0.0.0', port=port, debug=False)
-
