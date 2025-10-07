@@ -178,7 +178,7 @@ def login():
             if user.role != 'manager':
                 flash('Acesso negado. Apenas gestores podem entrar nesta área.', 'danger')
                 return redirect(url_for('login'))
-
+            
             login_user(user, remember=True)
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('dashboard'))
