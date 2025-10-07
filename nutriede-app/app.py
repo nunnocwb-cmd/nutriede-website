@@ -37,7 +37,13 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # --- Configuração do Banco de Dados ---
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+DATABASE_URL = os.getenv('DATABASE_URL')
+if not DATABASE_URL:
+    print("AVISO: A variável de ambiente DATABASE_URL não está definida. Usando um banco de dados SQLite local para desenvolvimento.")
+    # Define o caminho absoluto para o banco de dados na raiz do projeto
+    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'local_test.db')
+    DATABASE_URL = f'sqlite:///{db_path}'
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 
 # --- Configurações do E-mail ---
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
@@ -74,6 +80,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
+    role = db.Column(db.String(80), nullable=False, default='user')
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -112,11 +119,11 @@ def create_user():
         return
 
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    new_user = User(username=username, email=email, password_hash=hashed_password)
+    new_user = User(username=username, email=email, password_hash=hashed_password, role='manager')
 
     db.session.add(new_user)
     db.session.commit()
-    print(f"Utilizador '{username}' criado com sucesso!")
+    print(f"Utilizador '{username}' com a função 'manager' criado com sucesso!")
 
 # ==============================================================================
 # 7. ROTAS DA APLICAÇÃO (VIEWS)
@@ -168,6 +175,10 @@ def login():
         user = User.query.filter_by(email=email).first()
 
         if user and bcrypt.check_password_hash(user.password_hash, password):
+            if user.role != 'manager':
+                flash('Acesso negado. Apenas gestores podem entrar nesta área.', 'danger')
+                return redirect(url_for('login'))
+
             login_user(user, remember=True)
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('dashboard'))
@@ -305,4 +316,3 @@ if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))
     # Executa o app. debug=False é essencial para produção.
     app.run(host='0.0.0.0', port=port, debug=False)
-
