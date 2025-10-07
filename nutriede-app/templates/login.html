@@ -13,14 +13,16 @@
     <div class="login-card p-4 p-md-5 rounded shadow-lg text-center animate__animated animate__fadeInUp animate__delay-0.5s">
         <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Nutriêde" class="mb-4" height="60">
         <h2 class="h4 mb-4" style="color: #fff;">Área Restrita</h2>
-        <form>
+        
+        <!-- FORMULÁRIO CORRIGIDO ABAIXO -->
+        <form method="POST" action="{{ url_for('login') }}">
             <div class="input-group mb-3">
-                <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                <input type="text" class="form-control" placeholder="Usuário ou E-mail" required>
+                <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                <input type="email" class="form-control" placeholder="E-mail" name="email" required>
             </div>
             <div class="input-group mb-4">
                 <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                <input type="password" class="form-control" placeholder="Senha" required>
+                <input type="password" class="form-control" placeholder="Senha" name="password" required>
             </div>
             <div class="d-grid mb-3">
                 <button type="submit" class="btn btn-login">Entrar</button>
@@ -30,3 +32,23 @@
     </div>
 </div>
 {% endblock %}
+```
+
+**O que foi corrigido?**
+A única alteração crucial foi na tag `<form>`, que agora está assim:
+`<form method="POST" action="{{ url_for('login') }}">`
+
+Isto diz ao navegador para enviar os dados de forma segura (método `POST`) para a nossa rota de login no `app.py`, o que finalmente ativará a nossa lógica de verificação de senha.
+
+---
+### **Ação Final**
+
+1.  **Salve** o arquivo `login.html` com este novo conteúdo.
+2.  **Envie a atualização para o GitHub** para que o site online seja corrigido:
+    ```bash
+    # Na pasta raiz (NUTRI2K26)
+    git add .
+    git commit -m "Corrige o método de envio do formulário de login"
+    git push origin main
+    
+

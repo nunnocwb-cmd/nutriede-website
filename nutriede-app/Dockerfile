@@ -1,21 +1,20 @@
-# Usa uma imagem oficial do Python como base
-FROM python:3.9-slim
+# Usa a versão padrão e completa do Python 3.11 para garantir compatibilidade
+FROM python:3.11
 
 # Define o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
 # Copia o arquivo de dependências primeiro para otimizar o cache
-COPY requirements.txt .
+COPY nutriede-app/requirements.txt .
 
 # Instala as dependências
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia o restante do código da aplicação
-COPY . .
+# Copia o restante do código da aplicação para dentro do contêiner
+COPY nutriede-app/ .
 
-# Expõe a porta 8080, que o Cloud Run usa
-EXPOSE 8080
+# Expõe a porta 8000, que a nossa aplicação vai usar internamente
+EXPOSE 8000
 
-# Comando para iniciar a aplicação com o Gunicorn
-# Ele automaticamente usa a variável de ambiente $PORT fornecida pelo Cloud Run
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app
+# Comando para iniciar a aplicação com o Gunicorn, usando o caminho absoluto
+CMD ["/usr/local/bin/gunicorn", "--bind", "0.0.0.0:8000", "--workers", "1", "--threads", "8", "--timeout", "0", "app:app"]
