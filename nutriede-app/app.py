@@ -27,7 +27,12 @@ load_dotenv()
 app = Flask(__name__)
 
 # --- Configurações Gerais ---
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+# Define a chave secreta, essencial para a segurança da sessão
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    print("AVISO: A variável de ambiente SECRET_KEY não está definida. Usando uma chave padrão para desenvolvimento.")
+    SECRET_KEY = 'uma-chave-secreta-temporaria-e-insegura-para-desenvolvimento'
+app.config['SECRET_KEY'] = SECRET_KEY
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -194,8 +199,30 @@ def enviar_contato():
     if request.method == 'POST':
         form_type = request.form.get('form_type')
         msg = None
-        
+
         try:
+            # --- Validação Unificada ---
+            required_fields = []
+            if form_type == 'orcamento':
+                required_fields = ['nome', 'empresa', 'cnpj', 'qtd_refeicoes', 'email', 'mensagem']
+            elif form_type == 'fornecedor':
+                required_fields = ['fornecedor_empresa', 'fornecedor_contato', 'fornecedor_email', 'fornecedor_produto']
+            elif form_type == 'trabalhe_conosco':
+                required_fields = ['candidato_nome', 'candidato_email', 'candidato_telefone']
+
+            # Verifica se os campos de texto estão preenchidos
+            for field in required_fields:
+                if not request.form.get(field):
+                    flash('Por favor, preencha todos os campos obrigatórios.', 'warning')
+                    return redirect(url_for('home') + '#contato')
+
+            # Validação específica para o upload de arquivo
+            if form_type == 'trabalhe_conosco':
+                if 'curriculo' not in request.files or request.files['curriculo'].filename == '':
+                    flash('Por favor, anexe o seu currículo.', 'warning')
+                    return redirect(url_for('home') + '#contato')
+
+            # --- Processamento do Formulário (se a validação passar) ---
             if form_type == 'orcamento':
                 nome = request.form.get('nome')
                 empresa = request.form.get('empresa')
@@ -203,7 +230,7 @@ def enviar_contato():
                 qtd_refeicoes = request.form.get('qtd_refeicoes')
                 email = request.form.get('email')
                 mensagem = request.form.get('mensagem')
-                
+
                 subject = f"Novo Pedido de Orçamento - {empresa}"
                 body = f"""
                 Novo pedido de ORÇAMENTO recebido pelo site:
@@ -252,14 +279,15 @@ def enviar_contato():
                 """
                 msg = Message(subject=subject, sender=('Nutriêde Website', app.config['MAIL_USERNAME']), recipients=['nutriede@nutriede.com.br'], body=body)
                 
-                if curriculo and curriculo.filename != '':
-                    filename = secure_filename(curriculo.filename)
-                    msg.attach(filename, curriculo.content_type, curriculo.read())
+                # O anexo é adicionado aqui, pois a validação já garantiu que ele existe
+                filename = secure_filename(curriculo.filename)
+                msg.attach(filename, curriculo.content_type, curriculo.read())
 
             if msg:
                 mail.send(msg)
                 flash('Sua mensagem foi enviada com sucesso! Agradecemos o seu contato.', 'success')
             else:
+                # Esta condição agora é menos provável de ser atingida, mas é mantida por segurança
                 flash('Tipo de formulário desconhecido.', 'warning')
 
         except Exception as e:
