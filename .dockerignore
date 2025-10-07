@@ -23,6 +23,6 @@ local_test.db
 # Ignorar o diretório de uploads, pois deve ser um volume montado
 uploads/
 
-# Ignorar o próprio Dockerfile e ficheiros relacionados
-Dockerfile
-.dockerignore
+# Ignorar ficheiros de configuração de ambiente
+.env
+.flaskenv

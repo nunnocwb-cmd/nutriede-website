@@ -11,10 +11,13 @@ from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
-# Funções adicionadas para o sistema de login
 from flask_login import (LoginManager, UserMixin, login_user,
                        logout_user, login_required, current_user)
 from werkzeug.utils import secure_filename
+
+# Importações para o Cloud SQL Connector
+import sqlalchemy
+from google.cloud.sql.connector import Connector, IPTypes
 
 # ==============================================================================
 # 2. INICIALIZAÇÃO E CONFIGURAÇÕES DO APP
@@ -26,34 +29,53 @@ load_dotenv()
 # Cria a instância principal da aplicação Flask
 app = Flask(__name__)
 
-# --- Configurações Gerais ---
-# Define a chave secreta, essencial para a segurança da sessão
-SECRET_KEY = os.getenv('SECRET_KEY')
-if not SECRET_KEY:
-    print("AVISO: A variável de ambiente SECRET_KEY não está definida. Usando uma chave padrão para desenvolvimento.")
-    SECRET_KEY = 'uma-chave-secreta-temporaria-e-insegura-para-desenvolvimento'
-app.config['SECRET_KEY'] = SECRET_KEY
+# --- Configurações Gerais do App ---
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', os.urandom(24))
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# --- Configuração do Banco de Dados ---
-DATABASE_URL = os.getenv('DATABASE_URL')
-if not DATABASE_URL:
-    print("AVISO: A variável de ambiente DATABASE_URL não está definida. Usando um banco de dados SQLite local para desenvolvimento.")
-    # Define o caminho absoluto para o banco de dados na raiz do projeto
-    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'local_test.db')
-    DATABASE_URL = f'sqlite:///{db_path}'
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
-
-# --- Configurações do E-mail ---
-app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+# --- Configurações do E-mail (com valores padrão para robustez) ---
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'true').lower() in ['true', '1', 't']
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 
 # ==============================================================================
-# 3. INICIALIZAÇÃO DAS EXTENSÕES
+# 3. CONFIGURAÇÃO DA CONEXÃO COM O BANCO DE DADOS (NOVO MÉTODO)
+# ==============================================================================
+
+# Inicializa o conector do Cloud SQL
+connector = Connector()
+
+def get_conn() -> sqlalchemy.engine.base.Connection:
+    """Função que cria uma conexão segura com o Cloud SQL."""
+    # Lê as variáveis de ambiente necessárias para a conexão
+    instance_connection_name = os.environ["INSTANCE_CONNECTION_NAME"]
+    db_user = os.environ["DB_USER"]
+    db_pass = os.environ["DB_PASS"]
+    db_name = os.environ["DB_NAME"]
+
+    # Determina o tipo de IP a ser usado. No Google Cloud, usa a rede privada.
+    # Localmente (quando a variável de ambiente GOOGLE_CLOUD_RUN não existe), usa a pública.
+    ip_type = IPTypes.PRIVATE if os.environ.get("GOOGLE_CLOUD_RUN") else IPTypes.PUBLIC
+
+    return connector.connect(
+        instance_connection_name,
+        "pg8000",
+        user=db_user,
+        password=db_pass,
+        db=db_name,
+        ip_type=ip_type,
+    )
+
+# Configura o SQLAlchemy para usar a nossa função de conexão personalizada
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    "creator": get_conn
+}
+
+# ==============================================================================
+# 4. INICIALIZAÇÃO DAS EXTENSÕES
 # ==============================================================================
 
 # Garante que a pasta de uploads exista no projeto
@@ -66,16 +88,16 @@ bcrypt = Bcrypt(app)
 mail = Mail(app)
 login_manager = LoginManager(app)
 # Configurações do Flask-Login
-login_manager.login_view = 'login'  # Página para onde redirecionar se não estiver logado
+login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
-login_manager.login_message = "Por favor, faça login para aceder a esta página."
+login_manager.login_message = "Por favor, faça login para acessar esta página."
 
 # ==============================================================================
-# 4. MODELOS DO BANCO DE DADOS
+# 5. MODELOS DO BANCO DE DADOS
 # ==============================================================================
 
 class User(db.Model, UserMixin):
-    """Modelo para a tabela de utilizadores do sistema."""
+    """Modelo para a tabela de usuários do sistema."""
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -86,24 +108,24 @@ class User(db.Model, UserMixin):
         return f'<User {self.username}>'
 
 # ==============================================================================
-# 5. CONFIGURAÇÃO DO FLASK-LOGIN
+# 6. CONFIGURAÇÃO DO FLASK-LOGIN
 # ==============================================================================
 
 @login_manager.user_loader
 def load_user(user_id):
-    """Função que o Flask-Login usa para recarregar o objeto do utilizador."""
+    """Função que o Flask-Login usa para recarregar o objeto do usuário."""
     return db.session.get(User, int(user_id))
 
 # ==============================================================================
-# 6. COMANDOS PERSONALIZADOS DE TERMINAL (CLI)
+# 7. COMANDOS PERSONALIZADOS DE TERMINAL (CLI)
 # ==============================================================================
 
 @app.cli.command("create-user")
 def create_user():
-    """Cria um novo utilizador administrador no sistema."""
-    print("--- Criar Novo Utilizador Admin ---")
-    username = input("Digite o nome de utilizador: ")
-    email = input("Digite o e-mail do utilizador: ")
+    """Cria um novo usuário administrador no sistema."""
+    print("--- Criar Novo Usuário Admin ---")
+    username = input("Digite o nome de usuário: ")
+    email = input("Digite o e-mail do usuário: ")
     password = getpass.getpass("Digite a senha: ")
     confirm_password = getpass.getpass("Confirme a senha: ")
 
@@ -115,7 +137,7 @@ def create_user():
         (User.username == username) | (User.email == email)
     ).first()
     if existing_user:
-        print("Erro: Já existe um utilizador com esse nome ou e-mail.")
+        print("Erro: Já existe um usuário com esse nome ou e-mail.")
         return
 
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
@@ -123,10 +145,10 @@ def create_user():
 
     db.session.add(new_user)
     db.session.commit()
-    print(f"Utilizador '{username}' com a função 'manager' criado com sucesso!")
+    print(f"Usuário '{username}' com a função 'manager' criado com sucesso!")
 
 # ==============================================================================
-# 7. ROTAS DA APLICAÇÃO (VIEWS)
+# 8. ROTAS DA APLICAÇÃO (VIEWS)
 # ==============================================================================
 
 @app.context_processor
@@ -190,7 +212,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-    """Rota para fazer logout do utilizador."""
+    """Rota para fazer logout do usuário."""
     logout_user()
     return redirect(url_for('home'))
 
@@ -198,7 +220,7 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    """Rota para o painel de controlo, acessível apenas a utilizadores logados."""
+    """Rota para o painel de controle, acessível apenas a usuários logados."""
     return render_template('dashboard.html')
 
 
@@ -210,9 +232,9 @@ def enviar_contato():
     if request.method == 'POST':
         form_type = request.form.get('form_type')
         msg = None
-
+        
         try:
-            # --- Validação Unificada ---
+            # Validação Unificada
             required_fields = []
             if form_type == 'orcamento':
                 required_fields = ['nome', 'empresa', 'cnpj', 'qtd_refeicoes', 'email', 'mensagem']
@@ -221,19 +243,17 @@ def enviar_contato():
             elif form_type == 'trabalhe_conosco':
                 required_fields = ['candidato_nome', 'candidato_email', 'candidato_telefone']
 
-            # Verifica se os campos de texto estão preenchidos
             for field in required_fields:
                 if not request.form.get(field):
                     flash('Por favor, preencha todos os campos obrigatórios.', 'warning')
                     return redirect(url_for('home') + '#contato')
 
-            # Validação específica para o upload de arquivo
             if form_type == 'trabalhe_conosco':
                 if 'curriculo' not in request.files or request.files['curriculo'].filename == '':
                     flash('Por favor, anexe o seu currículo.', 'warning')
                     return redirect(url_for('home') + '#contato')
 
-            # --- Processamento do Formulário (se a validação passar) ---
+            # Processamento do Formulário
             if form_type == 'orcamento':
                 nome = request.form.get('nome')
                 empresa = request.form.get('empresa')
@@ -290,7 +310,6 @@ def enviar_contato():
                 """
                 msg = Message(subject=subject, sender=('Nutriêde Website', app.config['MAIL_USERNAME']), recipients=['nutriede@nutriede.com.br'], body=body)
                 
-                # O anexo é adicionado aqui, pois a validação já garantiu que ele existe
                 filename = secure_filename(curriculo.filename)
                 msg.attach(filename, curriculo.content_type, curriculo.read())
 
@@ -298,7 +317,6 @@ def enviar_contato():
                 mail.send(msg)
                 flash('Sua mensagem foi enviada com sucesso! Agradecemos o seu contato.', 'success')
             else:
-                # Esta condição agora é menos provável de ser atingida, mas é mantida por segurança
                 flash('Tipo de formulário desconhecido.', 'warning')
 
         except Exception as e:
@@ -308,11 +326,12 @@ def enviar_contato():
         return redirect(url_for('home') + '#contato')
 
 # ==============================================================================
-# 8. EXECUÇÃO DO SERVIDOR
+# 9. EXECUÇÃO DO SERVIDOR
 # ==============================================================================
 
 if __name__ == '__main__':
-    # Usa a porta definida pelo ambiente de produção ou 8080 para testes locais
+    # Usa a porta definida pelo ambiente de produção (Google Cloud) ou 8080 para testes locais
     port = int(os.environ.get("PORT", 8080))
     # Executa o app. debug=False é essencial para produção.
     app.run(host='0.0.0.0', port=port, debug=False)
+

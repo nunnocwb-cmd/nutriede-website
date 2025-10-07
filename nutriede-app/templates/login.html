@@ -11,22 +11,22 @@
 {% block content %}
 <div class="login-container">
     <div class="login-card p-4 p-md-5 rounded shadow-lg text-center animate__animated animate__fadeInUp animate__delay-0.5s">
+        
         <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Nutriêde" class="mb-4" height="60">
-        <h2 class="h4 mb-4" style="color: #fff;">Área Restrita</h2>
+        <h2 class="h4 mb-3" style="color: #fff;">Área Restrita</h2>
 
-        {# Bloco para renderizar mensagens flash (alertas) #}
+        {# Bloco para renderizar mensagens de erro DENTRO do card #}
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    <div class="alert alert-{{ category }} py-2" role="alert">
                         {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
         
-        <form method="POST" action="{{ url_for('login') }}">
+        <form method="POST" action="{{ url_for('login') }}" class="mt-4">
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
                 <input type="email" class="form-control" placeholder="E-mail" name="email" required>
@@ -43,3 +43,4 @@
     </div>
 </div>
 {% endblock %}
+

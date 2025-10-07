@@ -27,6 +27,19 @@ body {
 }
 
 /* ========================================= */
+/* ESTILOS DO MENU DE NAVEGAÇÃO              */
+/* ========================================= */
+
+.navbar-nav .nav-link .bi-file-person {
+    color: rgba(0, 0, 0, 0.65); /* Cor cinza escuro para o ícone */
+    transition: color 0.2s ease-in-out;
+}
+
+.navbar-nav .nav-link:hover .bi-file-person {
+    color: #f37021; /* Laranja da logo ao passar o mouse */
+}
+
+/* ========================================= */
 /* ESTILOS DA SEÇÃO HERO COM VÍDEO DE FUNDO  */
 /* ========================================= */
 
@@ -133,7 +146,6 @@ body {
     box-shadow: 0 0 0 0.25rem rgba(243, 112, 33, 0.25);
 }
 
-/* O botão do contato agora herda as cores da regra geral .btn-primary */
 .contato-section .btn-primary {
     padding: 0.8rem 1.5rem;
     font-size: 1.1rem;
@@ -145,7 +157,6 @@ body {
 
 .filosofia-icon svg {
     color: #f37021;
-    /* Laranja da logo */
     margin-bottom: 1rem;
 }
 
@@ -175,15 +186,12 @@ body {
 /* ========================================= */
 
 .hero-estrutura {
-    /* LINHA CORRIGIDA ABAIXO */
     background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../img/hero_estrutura.jpg");
     background-size: cover;
     background-position: center;
     height: 40vh;
-    /* Altura do banner do topo */
     min-height: 300px;
 }
-
 
 /* ========================================= */
 /* ESTILOS DA PÁGINA "NOSSOS SERVIÇOS"       */
@@ -194,31 +202,24 @@ body {
     background-size: cover;
     background-position: center;
     height: 40vh;
-    /* Altura do banner do topo */
     min-height: 300px;
 }
 
-/* Ícones de checagem nas listas */
 .detalhes-servico ul li i {
     color: #f37021;
-    /* Laranja da logo */
 }
 
 .card {
     border: none;
-    /* Remove a borda padrão do card */
 }
 
 .card img {
     max-width: 80px;
-    /* Tamanho dos ícones nos cards de vantagens */
     height: auto;
 }
 
-/* Ajuste para o botão da CTA */
 .cta-servicos .btn-primary {
     padding: 1rem 2.5rem;
-    /* Botão maior e mais proeminente */
     font-size: 1.25rem;
 }
 
@@ -228,25 +229,49 @@ body {
 
 .nav-tabs .nav-link {
     color: #6c757d;
-    /* Cor cinza para abas inativas */
 }
 
 .nav-tabs .nav-link.active {
     color: #f37021;
-    /* Laranja da logo para a aba ativa */
     border-color: #f37021 #f37021 #fff;
     font-weight: 600;
 }
+
 /* ========================================= */
-/* ESTILOS DO MENU DE NAVEGAÇÃO              */
+/* ESTILOS DA PÁGINA DO DASHBOARD (NOVOS)    */
 /* ========================================= */
 
-/* Estilo para o ícone da área restrita no menu */
-.navbar-nav .nav-link .bi-file-person {
-    color: rgba(0, 0, 0, 0.65); /* Cor cinza escuro para o ícone */
-    transition: color 0.2s ease-in-out;
+.dashboard-header .h2 {
+    font-weight: 600;
 }
 
-.navbar-nav .nav-link:hover .bi-file-person {
-    color: #f37021; /* Laranja da logo ao passar o mouse */
+.dashboard-card {
+    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-card .card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.dashboard-card .card-title {
+    font-weight: 600;
+    color: #343a40;
+}
+
+.dashboard-card .icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.dashboard-card .icon-clientes { color: #f37021; } /* Laranja */
+.dashboard-card .icon-cardapios { color: #28a745; } /* Verde */
+.dashboard-card .icon-faturas { color: #007bff; } /* Azul */

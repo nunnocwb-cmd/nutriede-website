@@ -3,46 +3,44 @@
 /* ========================================= */
 
 /* Fundo Gradiente Animado (Laranja e Cinza) */
-body.login-body {
-    /* Novas cores: Laranja da logo e tons de cinza suaves */
-    background: linear-gradient(-45deg, #f37021, #f8f9fa, #6c757d, #f37021);
+.login-body {
+    /* Define o gradiente com as cores da marca e tons de cinza */
+    background: linear-gradient(-45deg, #f37021, #6c757d, #f8f9fa, #f37021);
     background-size: 400% 400%;
+    /* Aplica a animação que move o gradiente */
     animation: gradientAnimation 15s ease infinite;
-    height: 100vh;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden; /* Evita barras de rolagem */
 }
 
+/* Animação que move a posição do fundo */
 @keyframes gradientAnimation {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
 
-/* Container do Login (Ajuste de Posição) */
+/* Container principal que centraliza o card */
 .login-container {
-    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* Ocupa a altura total da tela */
     width: 100%;
-    /* O padding-top foi removido, pois a barra de navegação não está presente nesta página */
 }
 
-/* Card de Login */
+/* Card de Login flutuante */
 .login-card {
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.65); /* Fundo escuro semi-transparente */
     border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px); /* Efeito de vidro fosco no fundo */
     max-width: 400px;
-    width: 100%;
+    width: 90%;
     /* Sombra mais forte para o efeito flutuante */
-    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5);
-    /* Remove a transformação que estava empurrando o card para cima */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
 }
 
-/* Estilo dos Inputs */
-.login-card .form-control {
+/* Estilo dos Inputs e Ícones */
+.login-card .form-control,
+.login-card .input-group-text {
     background-color: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: #fff;
@@ -52,28 +50,22 @@ body.login-body {
     color: rgba(255, 255, 255, 0.7);
 }
 
+.login-card .input-group-text {
+     color: rgba(255, 255, 255, 0.7);
+}
+
 .login-card .form-control:focus {
     background-color: rgba(255, 255, 255, 0.2);
     border-color: #f37021;
     box-shadow: 0 0 0 0.25rem rgba(243, 112, 33, 0.25);
+    color: #fff;
 }
 
-/* Estilo dos Ícones nos Inputs */
-.login-card .input-group-text {
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: rgba(255, 255, 255, 0.7);
-}
-
-/* Botão de Login (Herda o estilo geral, mas garantimos aqui) */
+/* Botão de Login */
 .btn-login {
-    background-color: #f37021;
-    border-color: #f37021;
+    padding: 0.75rem;
     font-weight: bold;
-    transition: background-color 0.3s ease;
+    font-size: 1.1rem;
+    /* Herda as cores da regra .btn-primary geral */
 }
 
-.btn-login:hover {
-    background-color: #e06015;
-    border-color: #e06015;
-}
